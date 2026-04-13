@@ -1,0 +1,100 @@
+{
+  "id": null,
+  "uid": "deploylens-main",
+  "title": "DeployLens — Jenkins Pipeline Health",
+  "tags": ["deploylens", "jenkins", "cicd"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "30s",
+  "time": { "from": "now-1h", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Total Jobs",
+      "gridPos": { "x": 0, "y": 0, "w": 4, "h": 4 },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "steps": [{"color": "blue", "value": null}] } }
+      },
+      "targets": [{ "datasource": "Prometheus", "expr": "deploylens_jobs_total", "legendFormat": "Total" }]
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Healthy Jobs",
+      "gridPos": { "x": 4, "y": 0, "w": 4, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "steps": [{"color": "red","value":null},{"color":"yellow","value":1},{"color":"green","value":3}] }
+        }
+      },
+      "targets": [{ "datasource": "Prometheus", "expr": "deploylens_jobs_healthy", "legendFormat": "Healthy" }]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Failing Jobs",
+      "gridPos": { "x": 8, "y": 0, "w": 4, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": { "steps": [{"color":"green","value":null},{"color":"yellow","value":1},{"color":"red","value":2}] }
+        }
+      },
+      "targets": [{ "datasource": "Prometheus", "expr": "deploylens_jobs_failing", "legendFormat": "Failing" }]
+    },
+    {
+      "id": 4,
+      "type": "gauge",
+      "title": "Overall Success Rate (%)",
+      "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "min": 0, "max": 100, "unit": "percent",
+          "thresholds": { "steps": [{"color":"red","value":null},{"color":"yellow","value":50},{"color":"green","value":80}] }
+        }
+      },
+      "targets": [{ "datasource": "Prometheus", "expr": "deploylens_success_rate", "legendFormat": "Success Rate" }]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Success Rate Over Time",
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "green" },
+          "custom": { "lineWidth": 2, "fillOpacity": 15 },
+          "min": 0, "max": 100, "unit": "percent"
+        }
+      },
+      "targets": [{ "datasource": "Prometheus", "expr": "deploylens_success_rate", "legendFormat": "Success Rate %" }]
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Healthy vs Failing Jobs",
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": { "custom": { "lineWidth": 2, "fillOpacity": 10 } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Healthy" }, "properties": [{ "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "Failing" }, "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        { "datasource": "Prometheus", "expr": "deploylens_jobs_healthy", "legendFormat": "Healthy" },
+        { "datasource": "Prometheus", "expr": "deploylens_jobs_failing", "legendFormat": "Failing" }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "alertlist",
+      "title": "Active Alerts",
+      "gridPos": { "x": 0, "y": 12, "w": 24, "h": 6 },
+      "options": { "alertName": "", "dashboardAlerts": false, "maxItems": 20, "sortOrder": 3, "stateFilter": { "firing": true, "pending": true } }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(java -version)",
+      "Bash(lsof -i :8080 -sTCP:LISTEN)",
+      "Bash(docker volume:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker rm:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(curl -s http://localhost:8081/api/v1/pipelines/health)",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s http://localhost:8081/api/v1/pipelines/jobs)",
+      "Bash(curl -s http://localhost:8081/api/v1/pipelines/failures)"
+    ]
+  }
+}

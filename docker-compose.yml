@@ -1,0 +1,97 @@
+services:
+
+  # ── Spring Boot Backend ────────────────────────────────────────────
+  deploylens-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: deploylens-backend
+    ports:
+      - "8081:8080"
+    environment:
+      - JENKINS_BASE_URL=${JENKINS_BASE_URL:-http://jenkins:8090}
+      - JENKINS_USERNAME=${JENKINS_USERNAME:-admin}
+      - JENKINS_API_TOKEN=${JENKINS_API_TOKEN:-}
+      - JENKINS_POLL_INTERVAL_MS=30000
+    depends_on:
+      - prometheus
+    networks:
+      - deploylens-net
+    restart: unless-stopped
+
+  # ── React Frontend ─────────────────────────────────────────────────
+  deploylens-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: deploylens-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - deploylens-backend
+    networks:
+      - deploylens-net
+    restart: unless-stopped
+
+  # ── Prometheus ─────────────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: deploylens-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - deploylens-net
+    restart: unless-stopped
+
+  # ── Grafana ────────────────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: deploylens-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD:-deploylens}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_ALERTING_ENABLED=false
+      - GF_UNIFIED_ALERTING_ENABLED=true
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/etc/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    networks:
+      - deploylens-net
+    restart: unless-stopped
+
+  # ── Jenkins (optional — comment out if you have a real instance) ───
+  jenkins:
+    image: jenkins/jenkins:lts-jdk17
+    container_name: deploylens-jenkins
+    ports:
+      - "8090:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins-data:/var/jenkins_home
+    networks:
+      - deploylens-net
+    restart: unless-stopped
+
+volumes:
+  prometheus-data:
+  grafana-data:
+  jenkins-data:
+
+networks:
+  deploylens-net:
+    driver: bridge

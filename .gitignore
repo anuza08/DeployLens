@@ -1,0 +1,38 @@
+# Environment
+.env
+.env.*
+*.env
+
+# Application properties with secrets
+backend/src/main/resources/application-prod.properties
+backend/src/main/resources/application-local.properties
+
+# Maven
+backend/target/
+backend/.mvn/
+*.jar
+*.war
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+
+# Docker volumes / data
+prometheus-data/
+grafana-data/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.suo
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
