@@ -14,6 +14,8 @@ No more hunting through Jenkins logs to find what broke. DeployLens shows you wh
 
 ## Features
 
+<img width="1440" height="900" alt="Screenshot 2026-04-13 at 3 59 33 PM" src="https://github.com/user-attachments/assets/57c241d3-48d4-47bf-8be3-2ec11d1af05a" />
+<img width="1440" height="900" alt="Screenshot 2026-04-13 at 3 59 17 PM" src="https://github.com/user-attachments/assets/266ec224-42cd-4678-aafd-eb1046e848be" />
 - **Live Dashboard** — React UI that auto-refreshes every 30 seconds
 - **Pipeline Health Cards** — per-job success rate, last build status, avg duration, build history
 - **Failure Tracker** — chronological list of recent failures across all pipelines
